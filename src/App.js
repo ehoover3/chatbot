@@ -111,7 +111,16 @@ function App() {
       </div>
 
       <div className='input-box'>
-        <input className='chat-input' type='text' value={userInput} onChange={handleInputChange} placeholder='Type your question...' />
+        <input
+          className='chat-input'
+          type='text'
+          value={userInput}
+          onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
+          placeholder='Type your question...'
+        />
         <button className='send-button' onClick={handleSend}>
           Send
         </button>
