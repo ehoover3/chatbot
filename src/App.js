@@ -534,23 +534,23 @@ function App() {
           </div>
         ))}
       </div>
-
-      <div className='suggestions-box'>
-        {suggestions.map((s, idx) => (
-          <div
-            key={idx}
-            className={`suggestion-item ${idx === selectedSuggestionIndex ? "highlighted" : ""}`}
-            onClick={() => {
-              setUserInput(s);
-              setSuggestions([]);
-              setSelectedSuggestionIndex(-1);
-              inputRef.current?.focus();
-            }}>
-            🔍 {s}
-          </div>
-        ))}
-      </div>
-
+      {userInput && suggestions.length > 0 && (
+        <div className='suggestions-box'>
+          {suggestions.map((s, idx) => (
+            <div
+              key={idx}
+              className={`suggestion-item ${idx === selectedSuggestionIndex ? "highlighted" : ""}`}
+              onClick={() => {
+                setUserInput(s);
+                setSuggestions([]);
+                setSelectedSuggestionIndex(-1);
+                inputRef.current?.focus();
+              }}>
+              🔍 {s}
+            </div>
+          ))}
+        </div>
+      )}
       <div className='input-box'>
         <input
           ref={inputRef}
