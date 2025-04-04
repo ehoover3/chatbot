@@ -581,6 +581,11 @@ function App() {
           Send
         </button>
       </div>
+      <footer className='footer'>
+        <a href='https://erichoover.org' target='_blank' rel='noopener noreferrer'>
+          Return to erichoover.org
+        </a>
+      </footer>
     </div>
   );
 }
