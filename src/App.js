@@ -54,6 +54,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
   const handleSend = () => {
     if (!userInput.trim()) return;
@@ -94,6 +95,7 @@ function App() {
     const value = e.target.value;
     setUserInput(value);
     setSuggestions(getTopSuggestions(value));
+    setSelectedSuggestionIndex(-1); // Reset selection
   };
 
   return (
@@ -110,7 +112,15 @@ function App() {
 
       <div className='suggestions-box'>
         {suggestions.map((s, idx) => (
-          <div key={idx} className='suggestion-item'>
+          <div
+            key={idx}
+            className={`suggestion-item ${idx === selectedSuggestionIndex ? "highlighted" : ""}`}
+            onClick={() => {
+              setUserInput(s);
+              setSuggestions([]);
+              setSelectedSuggestionIndex(-1);
+              inputRef.current?.focus();
+            }}>
             🔍 {s}
           </div>
         ))}
@@ -124,7 +134,21 @@ function App() {
           value={userInput}
           onChange={handleInputChange}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();
+            if (e.key === "Enter") {
+              if (selectedSuggestionIndex >= 0 && suggestions[selectedSuggestionIndex]) {
+                setUserInput(suggestions[selectedSuggestionIndex]);
+                setSuggestions([]);
+                setSelectedSuggestionIndex(-1);
+              } else {
+                handleSend();
+              }
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              setSelectedSuggestionIndex((prev) => Math.max(prev - 1, 0));
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setSelectedSuggestionIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
+            }
           }}
           placeholder='Type your question...'
         />
