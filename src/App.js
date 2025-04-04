@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -44,6 +44,12 @@ function App() {
       answer: "Check the internal policy portal under 'Loan Officer Resources' or refer to your manager for recent changes.",
     },
   ];
+
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
@@ -112,6 +118,7 @@ function App() {
 
       <div className='input-box'>
         <input
+          ref={inputRef}
           className='chat-input'
           type='text'
           value={userInput}
