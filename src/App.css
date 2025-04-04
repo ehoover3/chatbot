@@ -1,14 +1,11 @@
-.suggestion-item.highlighted {
-  background-color: #e0f7fa;
-  cursor: pointer;
-}
-
+/* General Styles */
 .app-container {
   max-width: 600px;
   margin: 40px auto;
   font-family: Arial, sans-serif;
 }
 
+/* Chat Box */
 .chat-box {
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -18,6 +15,7 @@
   margin-bottom: 10px;
 }
 
+/* Messages */
 .msg {
   margin-bottom: 10px;
 }
@@ -32,6 +30,7 @@
   color: #0077cc;
 }
 
+/* Suggestions Box */
 .suggestions-box {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -46,6 +45,12 @@
   padding: 4px 0;
 }
 
+.suggestion-item.highlighted {
+  background-color: #e0f7fa;
+  cursor: pointer;
+}
+
+/* Input Box */
 .input-box {
   display: flex;
   gap: 10px;
@@ -58,6 +63,7 @@
   border: 1px solid #ccc;
 }
 
+/* Send Button */
 .send-button {
   padding: 10px 20px;
   background-color: #0077cc;
@@ -67,6 +73,7 @@
   cursor: pointer;
 }
 
+/* Footer */
 .footer {
   margin-top: 20px;
   padding: 10px;
