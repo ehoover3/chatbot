@@ -1,21 +1,53 @@
 import React, { useState } from "react";
-
-const qaPairs = [
-  { question: "What type of loan are you interested in?", answer: "I can help you with personal loans, auto loans, mortgages, or business loans. Which one are you looking for?" },
-  { question: "How much would you like to borrow?", answer: "Please provide an estimate of how much funding you need, and I can guide you through the eligibility." },
-  { question: "What is your current employment status?", answer: "I’m currently employed full-time." },
-  { question: "What is your estimated annual income?", answer: "My estimated annual income is $60,000." },
-  { question: "What is your credit score range?", answer: "It is in the 700-750 range." },
-  { question: "Do you currently have any outstanding loans or debts?", answer: "Yes, I have a student loan with a remaining balance of $10,000." },
-  { question: "What is the purpose of the loan?", answer: "I'm looking to consolidate my credit card debt." },
-  { question: "Are you a U.S. citizen or permanent resident?", answer: "Yes, I am a U.S. citizen." },
-  { question: "Do you have any collateral to secure the loan?", answer: "I have a vehicle valued at $15,000." },
-  { question: "Would you like to proceed with a loan application?", answer: "Yes, please help me start the process." },
-];
+import "./App.css";
 
 function App() {
+  const qaPairs = [
+    {
+      question: "The applicant doesn't know their credit score. What should I do?",
+      answer: "You can proceed by estimating the range based on their credit history discussion or pull a soft credit check if allowed by policy.",
+    },
+    {
+      question: "The income verification documents are missing. How should I handle it?",
+      answer: "Request recent pay stubs, tax returns, or a W-2. Note in the system that income verification is pending and follow up within 48 hours.",
+    },
+    {
+      question: "I can't access the loan origination system. What steps should I take?",
+      answer: "Ensure you're connected to the secure VPN, then restart your system. If issues persist, contact IT support and log a ticket.",
+    },
+    {
+      question: "The applicant’s debt-to-income ratio is too high. What are my options?",
+      answer: "You can suggest a co-signer, offer a smaller loan amount, or recommend debt consolidation to improve their ratio.",
+    },
+    {
+      question: "What should I do if an applicant submits expired identification?",
+      answer: "Politely request a current, government-issued photo ID. Loans cannot be processed without valid ID verification.",
+    },
+    {
+      question: "How do I know if collateral is sufficient?",
+      answer: "Refer to the collateral value guide in the internal knowledge base or request a third-party appraisal if required.",
+    },
+    {
+      question: "I entered incorrect information in the application. Can I fix it?",
+      answer: "Yes, navigate to the application edit screen, correct the details, and ensure all changes are saved and revalidated.",
+    },
+    {
+      question: "The applicant wants to change loan types mid-process. What now?",
+      answer: "Close the current application and begin a new one with the desired loan type. Note the reason for the change in their file.",
+    },
+    {
+      question: "The system flagged the application for manual review. What does that mean?",
+      answer: "This usually indicates a mismatch or risk factor. Review the flagged sections and escalate to underwriting if needed.",
+    },
+    {
+      question: "Where can I find the latest loan policy updates?",
+      answer: "Check the internal policy portal under 'Loan Officer Resources' or refer to your manager for recent changes.",
+    },
+  ];
+
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
   const handleSend = () => {
     if (!userInput.trim()) return;
@@ -30,36 +62,62 @@ function App() {
 
     setMessages((prev) => [...prev, userMessage, botMessage]);
     setUserInput("");
+    setSuggestions([]);
+  };
+
+  const getTopSuggestions = (input) => {
+    if (!input) return [];
+
+    const scores = qaPairs.map((pair) => ({
+      question: pair.question,
+      score: similarityScore(pair.question.toLowerCase(), input.toLowerCase()),
+    }));
+
+    return scores
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((item) => item.question);
+  };
+
+  const similarityScore = (text, input) => {
+    const inputWords = input.split(" ");
+    return inputWords.reduce((acc, word) => (text.includes(word) ? acc + 1 : acc), 0);
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setUserInput(value);
+    setSuggestions(getTopSuggestions(value));
   };
 
   return (
-    <div style={styles.container}>
+    <div className='app-container'>
       <h2>💬 Loan Officer Chatbot</h2>
-      <div style={styles.chatBox}>
+
+      <div className='chat-box'>
         {messages.map((msg, idx) => (
-          <div key={idx} style={msg.sender === "user" ? styles.userMsg : styles.botMsg}>
+          <div key={idx} className={msg.sender === "user" ? "msg user-msg" : "msg bot-msg"}>
             <strong>{msg.sender === "user" ? "You" : "Bot"}:</strong> {msg.text}
           </div>
         ))}
       </div>
-      <div style={styles.inputBox}>
-        <input style={styles.input} type='text' value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder='Type your question...' />
-        <button onClick={handleSend} style={styles.button}>
+
+      <div className='suggestions-box'>
+        {suggestions.map((s, idx) => (
+          <div key={idx} className='suggestion-item'>
+            🔍 {s}
+          </div>
+        ))}
+      </div>
+
+      <div className='input-box'>
+        <input className='chat-input' type='text' value={userInput} onChange={handleInputChange} placeholder='Type your question...' />
+        <button className='send-button' onClick={handleSend}>
           Send
         </button>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: 600, margin: "40px auto", fontFamily: "Arial" },
-  chatBox: { border: "1px solid #ccc", padding: 20, minHeight: 300, marginBottom: 10, borderRadius: 8, background: "#f9f9f9" },
-  userMsg: { textAlign: "right", marginBottom: 10, color: "#333" },
-  botMsg: { textAlign: "left", marginBottom: 10, color: "#0077cc" },
-  inputBox: { display: "flex", gap: 10 },
-  input: { flex: 1, padding: 10, borderRadius: 4, border: "1px solid #ccc" },
-  button: { padding: "10px 20px", backgroundColor: "#0077cc", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" },
-};
 
 export default App;
